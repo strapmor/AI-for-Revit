@@ -16,6 +16,7 @@
 		<RootNamespace></RootNamespace>
 		<AssemblyName></AssemblyName>
 		<BaseOutputPath>C:\Users\roman\Documents\Polina\Git\bin\Debug</BaseOutputPath>
+		<ProjectIcon>icon.ico</ProjectIcon>
 	</PropertyGroup>
 
 	<!-- Настройки Debug -->
@@ -46,23 +47,23 @@
 
 	<ItemGroup>
 		<!-- Библиотеки Revit -->
-		<Reference Include="RevitAddInUtility">
-			<HintPath>C:\Program Files\Autodesk\Revit 2021\RevitAddInUtility.dll</HintPath>
-		</Reference>
-		<Reference Include="RevitAPI">
-			<HintPath>C:\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
-		<Reference Include="RevitAPIUI">
-			<HintPath>C:\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
-			<Private>False</Private>
-		</Reference>
 
 		<!-- Системные библиотеки -->
 		<Reference Include="PresentationCore" />
 		<Reference Include="PresentationFramework" />
 		<Reference Include="Microsoft.CSharp" />
+		<Reference Include="RevitAPI">
+		  <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPI.dll</HintPath>
+		  <Private>True</Private>
+		</Reference>
+		<Reference Include="RevitAPIUI">
+		  <HintPath>..\..\..\..\..\..\Program Files\Autodesk\Revit 2023\RevitAPIUI.dll</HintPath>
+		  <Private>True</Private>
+		</Reference>
 		<Reference Include="System" />
+		<Reference Include="System.Buffers">
+		  <HintPath>..\..\..\..\..\Program Files\Autodesk\Revit 2021\System.Buffers.dll</HintPath>
+		</Reference>
 		<Reference Include="System.Core" />
 		<Reference Include="System.Security" />
 		<Reference Include="System.Xaml" />
@@ -77,16 +78,19 @@
 	<!-- Подключение Newtonsoft.Json через NuGet -->
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Text.Json" Version="9.0.3" />
 	</ItemGroup>
 
 	<!-- Исходные файлы -->
 	<ItemGroup>
+		<Compile Include="AIService.cs" />
 		<Compile Include="App.cs" />
-		<Compile Include="ChatGPTResponse.cs" />
+		<Compile Include="AIResponse.cs" />
 		<Compile Include="Logger.cs" />
 		<Compile Include="MyCommand.cs" />
 		<Compile Include="MyPluginWindow.xaml.cs" />
 		<Compile Include="Properties\AssemblyInfo.cs" />
+		<Compile Include="ScriptCompiler.cs" />
 		<Page Include="MyPluginWindow.xaml" />
 		<Page Include="Themes\Generic.xaml">
 		  <Generator>MSBuild:Compile</Generator>
@@ -99,6 +103,12 @@
 	<!-- Файл конфигурации -->
 	<ItemGroup>
 		<None Include="packages.config" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Update="Properties\Resources.resx">
+	    <Generator>ResXFileCodeGenerator</Generator>
+	    <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

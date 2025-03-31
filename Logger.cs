@@ -1,42 +1,78 @@
 ﻿using System;
 using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Diagnostics;
+using System.Windows;
 
 namespace MyPlugin
 {
     public static class Logger
     {
-        private static int requestNumber = 1; // Нумерация запросов
-        private static readonly string logsDirectory = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Logs");
+        private static readonly string logsDirectory =
+            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "MyPluginLogs");
 
         static Logger()
         {
-            if (!Directory.Exists(logsDirectory))
+            try
             {
-                Directory.CreateDirectory(logsDirectory);
+                if (!Directory.Exists(logsDirectory))
+                {
+                    Directory.CreateDirectory(logsDirectory);
+                }
+                // Дополнительная проверка на запись
+                string testFilePath = Path.Combine(logsDirectory, "test.txt");
+                File.WriteAllText(testFilePath, "test");
+                File.Delete(testFilePath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка инициализации логов: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
-        public static void SaveLog(string userInput, string chatGPTResponse, double cost, string errorMessage)
+        public static void SaveLog(string userInput, AIResponse response)
         {
-            string logFilePath = Path.Combine(logsDirectory, $"{DateTime.Now:yyyy-MM-dd}.txt");
-
-            using (StreamWriter writer = new StreamWriter(logFilePath, true))
+            try
             {
-                writer.WriteLine($"Запрос #{requestNumber}");
-                writer.WriteLine($"Время: {DateTime.Now:HH:mm:ss}");
-                writer.WriteLine($"Вопрос: {userInput}");
-                writer.WriteLine($"Ответ: {chatGPTResponse}");
-                writer.WriteLine($"Цена: ${cost}");
+                string requestId = Guid.NewGuid().ToString(); // Уникальный идентификатор запроса
+                string logFilePath = Path.Combine(logsDirectory, $"{DateTime.Now:yyyy-MM-dd}.txt");
+                string jsonLogFilePath = Path.Combine(logsDirectory, $"{DateTime.Now:yyyy-MM-dd}.json");
 
-                if (!string.IsNullOrEmpty(errorMessage))
+                var logEntry = new
                 {
-                    writer.WriteLine($"Ошибка: {errorMessage}");
-                }
+                    RequestId = requestId,
+                    Time = DateTime.Now.ToString("HH:mm:ss"),
+                    Question = userInput,
+                    Answer = response.Answer,
+                    Cost = response.Cost,
+                    ErrorMessage = response.ErrorMessage
+                };
 
-                writer.WriteLine(new string('-', 50)); // Разделитель
+                string logText = new StringBuilder()
+                    .AppendLine($"Запрос ID: {requestId}")
+                    .AppendLine($"Время: {logEntry.Time}")
+                    .AppendLine($"Вопрос: {logEntry.Question}")
+                    .AppendLine($"Ответ: {logEntry.Answer}")
+                    .AppendLine($"Цена: ${logEntry.Cost:F4}")
+                    .AppendLine(string.IsNullOrEmpty(logEntry.ErrorMessage) ? "" : $"Ошибка: {logEntry.ErrorMessage}")
+                    .AppendLine(new string('-', 50))
+                    .ToString();
+
+                string jsonLog = JsonSerializer.Serialize(logEntry, new JsonSerializerOptions { WriteIndented = true });
+
+                // Записываем в обычный лог
+                File.AppendAllText(logFilePath, logText, Encoding.UTF8);
+
+                // Записываем в JSON лог
+                File.AppendAllText(jsonLogFilePath, jsonLog + Environment.NewLine, Encoding.UTF8);
             }
-
-            requestNumber++; // Увеличиваем номер запроса
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при записи лога: {ex.Message}", "Ошибка логирования",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         public static void OpenLog()
@@ -45,12 +81,24 @@ namespace MyPlugin
 
             if (!File.Exists(logFilePath))
             {
-                System.Windows.MessageBox.Show("Лог-файл за сегодня отсутствует.", "Журнал", 
-                    System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
+                MessageBox.Show("Лог-файл за сегодня отсутствует.", "Журнал",
+                    MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            System.Diagnostics.Process.Start("notepad.exe", logFilePath);
+            try
+            {
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = logFilePath,
+                    UseShellExecute = true
+                });
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при открытии лога: {ex.Message}", "Ошибка",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

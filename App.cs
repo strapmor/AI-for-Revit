@@ -12,7 +12,7 @@ namespace MyPlugin
         {
             string assemblyLocation = Assembly.GetExecutingAssembly().Location,
                     iconsDirectoryPath = Path.GetDirectoryName(assemblyLocation) + @"\icons\";
-            string tabName = "Мои плагины";
+            string tabName = "AI Plugin";
 
             // Создаем вкладку и панель
             application.CreateRibbonTab(tabName);
@@ -23,7 +23,7 @@ namespace MyPlugin
 
                 panel.AddItem(new PushButtonData(nameof(MyCommand), "AI for Revit", assemblyLocation, typeof(MyCommand).FullName)
                 {
-                    LargeImage = new BitmapImage(new Uri(iconsDirectoryPath + "icon.png"))
+                    LargeImage = new BitmapImage(new Uri(iconsDirectoryPath + "icon.ico"))
                 });
             }
             return Result.Succeeded;
