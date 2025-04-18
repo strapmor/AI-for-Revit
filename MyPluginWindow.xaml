@@ -116,7 +116,7 @@
 
                 <!-- Кнопки -->
                 <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,20,0,0">
-                    <Button Content="Отправить" Click="SendButton_Click" Style="{StaticResource RoundedButtonStyle}" x:Name="SendButton"/>
+                    <Button Content="Отправить" Click="SendButton_Click" Style="{StaticResource RoundedButtonStyle}" x:Name="SendButton" />
                     <Button Content="Завершить" Click="CloseButton_Click" Style="{StaticResource RoundedButtonStyle}"/>
                     <Button Content="Журнал" Click="LogButton_Click" Style="{StaticResource RoundedButtonStyle}"/>
                 </StackPanel>
