@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "revit-mcp": {
+      "command": "node",
+      "args": [ "C:\\Users\\Adminushka\\Downloads\\revit-mcp\\build\\index.js" ]
+    }
+  }
+}
