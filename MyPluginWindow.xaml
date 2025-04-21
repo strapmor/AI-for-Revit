@@ -31,6 +31,9 @@
                                VerticalAlignment="Center" Margin="10,0,0,0"/>
                     
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                        <!-- Индикатор состояния подключения -->
+                        <Ellipse Name="ConnectionIndicator" Width="16" Height="16" Margin="10,0,10,0"
+                               Fill="Gray" ToolTip="Состояние подключения к MCP серверу"/>
                         <!-- Кнопка свернуть -->
                         <Button Content="−" Click="MinimizeButton_Click" Width="30" Height="30"
                                 Background="Transparent" Foreground="White"

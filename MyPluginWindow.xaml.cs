@@ -105,6 +105,38 @@ namespace MyPlugin
 
     public partial class MyPluginWindow : Window
     {
+        public enum MCPConnectionState
+        {
+            Disconnected,
+            Connecting,
+            Connected
+        }
+
+        private MCPConnectionState _connectionState = MCPConnectionState.Disconnected;
+        public MCPConnectionState ConnectionState
+        {
+            get => _connectionState;
+            set
+            {
+                _connectionState = value;
+                UpdateConnectionIndicator();
+            }
+        }
+
+        private void UpdateConnectionIndicator()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ConnectionIndicator.Fill = _connectionState switch
+                {
+                    MCPConnectionState.Disconnected => Brushes.Red,
+                    MCPConnectionState.Connecting => Brushes.Yellow,
+                    MCPConnectionState.Connected => Brushes.Green,
+                    _ => Brushes.Gray
+                };
+            });
+        }
+
         private readonly ExternalCommandData _commandData;
         private string _message;
         private readonly ElementSet _elements;
@@ -118,6 +150,9 @@ namespace MyPlugin
             this._elements = elements;
             this._aiService = new AIService();
             this._mcpStatuses = new ObservableCollection<McpStatusViewModel>();
+            
+            // Инициализация состояния подключения
+            _ = InitializeConnectionAsync();
 
             InitializeComponent();
             McpStatusPanel.ItemsSource = _mcpStatuses;
@@ -224,6 +259,20 @@ namespace MyPlugin
         private void MinimizeButton_Click(object sender, RoutedEventArgs e) => this.WindowState = WindowState.Minimized;
         private void CloseButton_Click(object sender, RoutedEventArgs e) => this.Close();
         private void LogButton_Click(object sender, RoutedEventArgs e) => Logger.OpenLog();
+        private async Task InitializeConnectionAsync()
+        {
+            try
+            {
+                ConnectionState = MCPConnectionState.Connecting;
+                await _aiService.Initialize();
+                ConnectionState = MCPConnectionState.Connected;
+            }
+            catch
+            {
+                ConnectionState = MCPConnectionState.Disconnected;
+            }
+        }
+
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => this.DragMove();
     }
 }
