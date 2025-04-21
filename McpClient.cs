@@ -108,8 +108,14 @@ namespace MyPlugin
                 // Convert Dictionary to IReadOnlyDictionary
                 IReadOnlyDictionary<string, object?> readOnlyParams = parameters;
 
-                // Call the tool without JsonSerializerOptions parameter
-                return await Client.CallToolAsync(toolName, readOnlyParams, null, CancellationToken.None);
+                // Create JsonSerializerOptions with default settings
+                var jsonOptions = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                    WriteIndented = true
+                };
+                
+                return await Client.CallToolAsync(toolName, readOnlyParams, null, null, CancellationToken.None);
             }
             catch (Exception ex)
             {

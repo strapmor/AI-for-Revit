@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
@@ -170,33 +170,44 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
 
         private async Task<McpResponseItem> ProcessMcpCall(McpToolCall mcpCall)
         {
-            var response = new McpResponseItem 
-            { 
+            var response = new McpResponseItem
+            {
                 Tool = mcpCall.Tool,
-                Status = ResponseStatus.InProgress 
+                Status = ResponseStatus.InProgress
             };
 
-            try 
+            try
             {
                 var result = await ExecuteMcpTool(mcpCall.Tool, mcpCall.Parameters);
                 response.Result = result;
 
-                if (result?.Content != null)
+                if (result != null)
                 {
-                    var statusContent = result.Content.FirstOrDefault(c => c.Type.ToLower() == "status");
-                    var messageContent = result.Content.FirstOrDefault(c => c.Type.ToLower() == "text" || c.Type.ToLower() == "error");
+                    // Если результат содержит Content, обрабатываем его
+                    if (result.Content != null && result.Content.Any())
+                    {
+                        var statusContent = result.Content.FirstOrDefault(c => c.Type.ToLower() == "status");
+                        var messageContent = result.Content.FirstOrDefault(c => c.Type.ToLower() == "text" || c.Type.ToLower() == "error");
 
-                    response.Status = statusContent?.Text?.ToLower() == "error" ? ResponseStatus.Error :
-                                   statusContent?.Text?.ToLower() == "warning" ? ResponseStatus.Warning :
-                                   ResponseStatus.Success;
+                        response.Status = statusContent?.Text?.ToLower() == "error" ? ResponseStatus.Error :
+                                       statusContent?.Text?.ToLower() == "warning" ? ResponseStatus.Warning :
+                                       ResponseStatus.Success;
 
-                    response.Message = messageContent?.Text;
+                        response.Message = messageContent?.Text;
+                    }
+                    // Если Content отсутствует, считаем выполнение успешным
+                    else
+                    {
+                        response.Status = ResponseStatus.Success;
+                        response.Message = "Команда выполнена успешно";
+                    }
                 }
             }
             catch (Exception ex)
             {
                 response.Status = ResponseStatus.Error;
                 response.Message = ex.Message;
+                Logger.Log($"Ошибка при выполнении MCP команды: {ex.Message}");
             }
 
             return response;
@@ -470,7 +481,8 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
                 return await mcpClient.Client.CallToolAsync(
                     toolName, 
                     paramsCopy, 
-                    new JsonSerializerOptions(), 
+                    null, // progress
+                    null, // serializerOptions
                     CancellationToken.None);
             }
             catch (Exception ex)
