@@ -12,6 +12,8 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace MyPlugin
 {
@@ -25,6 +27,29 @@ namespace MyPlugin
     {
         public Dictionary<string, McpServerConfig> mcpServers { get; set; }
     }
+
+    public class ToolProperty
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; }
+
+        [JsonProperty("description")]
+        public string Description { get; set; }
+    }
+
+    public class ToolParametersSchema
+    {
+        [JsonProperty("type")]
+        public string Type { get; set; } = "object";
+
+        [JsonProperty("properties")]
+        public Dictionary<string, ToolProperty> Properties { get; set; } = new Dictionary<string, ToolProperty>();
+
+        [JsonProperty("required")]
+        public List<string> Required { get; set; } = new List<string>();
+    }
+
+
 
     public class McpClient
     {
@@ -63,7 +88,7 @@ namespace MyPlugin
                     PropertyNameCaseInsensitive = true
                 };
                 
-                var config = JsonSerializer.Deserialize<McpServers>(mcpConfig, options);
+                var config = System.Text.Json.JsonSerializer.Deserialize<McpServers>(mcpConfig, options);
 
                 if (config?.mcpServers == null || !config.mcpServers.ContainsKey("revit-mcp"))
                 {

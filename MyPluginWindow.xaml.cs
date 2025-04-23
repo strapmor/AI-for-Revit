@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿﻿﻿﻿using System;
 using System.IO;
 using System.Net.Http;
 using System.Text;
@@ -150,11 +150,12 @@ namespace MyPlugin
             this._elements = elements;
             this._aiService = new AIService();
             this._mcpStatuses = new ObservableCollection<McpStatusViewModel>();
-            
+            InitializeComponent();
+
             // Инициализация состояния подключения
             _ = InitializeConnectionAsync();
 
-            InitializeComponent();
+            
             McpStatusPanel.ItemsSource = _mcpStatuses;
         }
 
@@ -216,9 +217,29 @@ namespace MyPlugin
                 });
 
                 // Обработка финального ответа
+                OutputTextBox.Text = response.Answer
+                    .Replace("```csharp", string.Empty)
+                    .Replace("```", string.Empty)
+                    .Trim();
+
+                // Обновляем статусы MCP команд
+                foreach (var mcpResponse in response.McpResponses)
+                {
+                    var statusViewModel = new McpStatusViewModel
+                    {
+                        Tool = mcpResponse.Tool,
+                        Status = mcpResponse.Status,
+                        StatusText = mcpResponse.Message,
+                        IsInProgress = mcpResponse.Status == ResponseStatus.InProgress,
+                        Progress = mcpResponse.Status == ResponseStatus.Success ? 100 : 0
+                    };
+                    _mcpStatuses.Add(statusViewModel);
+                }
+
+                // Обработка финального ответа
                 OutputTextBox.Text = response.Answer;
                 OutputTextBox.ScrollToEnd();
-            }
+        }
             catch (Exception ex)
             {
                 MessageBox.Show($"Ошибка: {ex.Message}", "Ошибка");

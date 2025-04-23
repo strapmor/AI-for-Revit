@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace MyPlugin
         private readonly McpClient mcpClient;
         private static readonly string apiKey = Environment.GetEnvironmentVariable("DEEPSEEK_FREE");
         private static readonly string apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-        private static readonly string MODEL = "deepseek/deepseek-chat:free"; 
+        private static readonly string MODEL = "deepseek/deepseek-chat"; 
         private List<Dictionary<string, string>> conversationHistory;
 
         public AIService()
@@ -34,111 +34,7 @@ namespace MyPlugin
             conversationHistory.Add(new Dictionary<string, string> 
             {
                 { "role", "system" },
-            { "content", @"Ты помощник для пользователей Autodesk Revit. У тебя есть доступ к следующим инструментам MCP с их параметрами:
-
-1. get_current_view_info() - получить информацию о текущем виде
-   Параметры: нет
-
-2. get_current_view_elements() - получить элементы текущего вида
-   Параметры: 
-   - modelCategoryList: string[] - список категорий элементов
-   - annotationCategoryList: string[] - список аннотационных категорий
-   - includeHidden: bool - включать скрытые элементы
-   - limit: int - максимальное количество элементов
-
-3. get_available_family_types() - получить доступные типы семейств
-   Параметры:
-   - categoryList: string[] - список категорий
-   - familyNameFilter: string - фильтр по имени семейства
-   - limit: int - максимальное количество типов
-
-4. get_selected_elements() - получить выбранные элементы
-   Параметры:
-   - limit: int - максимальное количество элементов
-
-5. create_point_based_element() - создать элемент на основе точки
-   Параметры:
-   - data: object[] - массив объектов с параметрами:
-     * name: string - имя элемента
-     * typeId: int - ID типа семейства
-     * locationPoint: object - координаты точки {x, y, z}
-     * width: double - ширина
-     * height: double - высота
-     * baseLevel: double - уровень основания
-     * baseOffset: double - смещение от уровня
-     * rotation: double - угол поворота
-
-6. create_line_based_element() - создать элемент на основе линии
-   Параметры:
-   - data: object[] - массив объектов с параметрами:
-     * name: string - имя элемента
-     * typeId: int - ID типа семейства
-     * locationLine: object - линия {p0: {x, y, z}, p1: {x, y, z}}
-     * thickness: double - толщина
-     * height: double - высота
-     * baseLevel: double - уровень основания
-     * baseOffset: double - смещение от уровня
-
-7. create_surface_based_element() - создать элемент на основе поверхности
-   Параметры:
-   - data: object[] - массив объектов с параметрами:
-     * name: string - имя элемента
-     * typeId: int - ID типа семейства
-     * boundary: object - граница {outerLoop: [{p0: {x, y, z}, p1: {x, y, z}}]}
-     * thickness: double - толщина
-     * baseLevel: double - уровень основания
-     * baseOffset: double - смещение от уровня
-
-8. delete_element() - удалить элемент
-   Параметры:
-   - elementIds: string[] - массив ID элементов
-
-9. send_code_to_revit() - отправить C# код в Revit
-   Параметры:
-   - code: string - код на C#
-   - parameters: object[] - параметры для кода
-
-10. color_elements() - раскрасить элементы
-    Параметры:
-    - categoryName: string - имя категории
-    - parameterName: string - имя параметра
-    - useGradient: bool - использовать градиент
-    - customColors: object[] - массив цветов {r, g, b}
-
-11. tag_all_walls() - создать марки для всех стен
-    Параметры:
-    - useLeader: bool - использовать выноски
-    - tagTypeId: string - ID типа марки
-
-Используй эти инструменты для выполнения задач пользователя. Ты можешь:
-
-1. get_current_view_info() - получить информацию о текущем виде
-2. get_current_view_elements() - получить элементы текущего вида
-3. get_available_family_types() - получить доступные типы семейств
-4. get_selected_elements() - получить выбранные элементы
-5. create_point_based_element() - создать элемент на основе точки
-6. create_line_based_element() - создать элемент на основе линии
-7. create_surface_based_element() - создать элемент на основе поверхности
-8. delete_element() - удалить элемент
-9. send_code_to_revit() - отправить C# код в Revit
-10. color_elements() - раскрасить элементы
-11. tag_all_walls() - создать марки для всех стен
-
-Используй эти инструменты для выполнения задач пользователя. Ты можешь:
-1. Получать информацию о модели через get_* инструменты
-2. Создавать новые элементы через create_* инструменты
-3. Удалять элементы через delete_element
-4. Выполнять C# код через send_code_to_revit
-5. Комбинировать несколько инструментов для сложных задач
-
-Когда используешь инструмент, указывай его параметры в формате JSON. Например:
-get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidden"": false})
-
-Если нужно написать C# код, используй send_code_to_revit и убедись, что код:
-1. Содержит все необходимые using директивы
-2. Правильно работает с транзакциями
-3. Обрабатывает ошибки
-4. Возвращает результат через Result.Succeeded/Failed" }
+                { "content", @"Ты помощник для пользователей Autodesk Revit." }
             });
         }
 
@@ -168,6 +64,7 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
                     { "content", userPrompt } 
                 });
 
+                
                 var response = new AIResponse();
                 var fullResponse = new StringBuilder();
                 var mcpBuffer = new StringBuilder();
@@ -178,7 +75,7 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
                     mcpBuffer.Append(chunk);
 
                     // Проверяем, есть ли в буфере вызов MCP инструмента
-                    var mcpCall = ExtractMcpCallFromBuffer(mcpBuffer);
+                    var mcpCall = ExtractMcpCalls(mcpBuffer);
                     if (mcpCall != null)
                     {
                         // Обрабатываем MCP инструмент
@@ -216,7 +113,48 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
             }
         }
 
-        private McpToolCall? ExtractMcpCallFromBuffer(StringBuilder buffer)
+        private async Task<List<object>> GetToolsSchemaAsync()
+        {
+            var tools = await mcpClient.Client.ListToolsAsync();
+            var schemas = new List<object>();
+
+            foreach (var tool in tools)
+            {
+                    var paramsSchema = System.Text.Json.JsonSerializer.Deserialize<ToolParametersSchema>(
+                        tool.ProtocolTool.InputSchema.ToString(),
+                        new System.Text.Json.JsonSerializerOptions 
+                        { 
+                            PropertyNameCaseInsensitive = true 
+                        });
+                var schema = new
+                {
+                    type = "function",
+                    function = new
+                    {
+                        name = tool.Name,
+                        description = tool.Description,
+                        parameters = new
+                        {
+                            type = paramsSchema.Type,
+                            properties = paramsSchema.Properties?.ToDictionary(
+                                p => p.Key,
+                                p => new
+                                {
+                                    type = p.Value.Type,
+                                    description = p.Value.Description
+                                }),
+                            required = paramsSchema.Required
+                        }
+                    }
+                };
+
+                schemas.Add(schema);
+            }
+
+            return schemas;
+        }
+
+        private McpToolCall? ExtractMcpCalls(StringBuilder buffer)
         {
             var text = buffer.ToString();
             var pattern = @"[\w_]+\s*\(.*?\)";
@@ -295,6 +233,346 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
             {
                 using (var client = new HttpClient())
                 {
+                    var tools = new List<object>
+                    {
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "color_elements",
+                                description = "Color elements in the current view based on a category and parameter value",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        categoryName = new { type = "string", description = "The name of the Revit category to color" },
+                                        parameterName = new { type = "string", description = "The name of the parameter to use for grouping and coloring elements" },
+                                        useGradient = new { type = "boolean", description = "Whether to use a gradient color scheme" },
+                                        customColors = new 
+                                        { 
+                                            type = "array",
+                                            items = new
+                                            {
+                                                type = "object",
+                                                properties = new
+                                                {
+                                                    r = new { type = "integer", minimum = 0, maximum = 255 },
+                                                    g = new { type = "integer", minimum = 0, maximum = 255 },
+                                                    b = new { type = "integer", minimum = 0, maximum = 255 }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    required = new[] { "categoryName", "parameterName" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "create_line_based_element",
+                                description = "Create one or more line-based elements in Revit such as walls, beams, or pipes",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        data = new
+                                        {
+                                            type = "array",
+                                            items = new
+                                            {
+                                                type = "object",
+                                                properties = new
+                                                {
+                                                    name = new { type = "string" },
+                                                    typeId = new { type = "number" },
+                                                    locationLine = new
+                                                    {
+                                                        type = "object",
+                                                        properties = new
+                                                        {
+                                                            p0 = new
+                                                            {
+                                                                type = "object",
+                                                                properties = new
+                                                                {
+                                                                    x = new { type = "number" },
+                                                                    y = new { type = "number" },
+                                                                    z = new { type = "number" }
+                                                                }
+                                                            },
+                                                            p1 = new
+                                                            {
+                                                                type = "object",
+                                                                properties = new
+                                                                {
+                                                                    x = new { type = "number" },
+                                                                    y = new { type = "number" },
+                                                                    z = new { type = "number" }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    thickness = new { type = "number" },
+                                                    height = new { type = "number" },
+                                                    baseLevel = new { type = "number" },
+                                                    baseOffset = new { type = "number" }
+                                                },
+                                                required = new[] { "name", "locationLine", "thickness", "height", "baseLevel", "baseOffset" }
+                                            }
+                                        }
+                                    },
+                                    required = new[] { "data" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "create_point_based_element",
+                                description = "Create one or more point-based elements in Revit such as doors, windows, or furniture",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        data = new
+                                        {
+                                            type = "array",
+                                            items = new
+                                            {
+                                                type = "object",
+                                                properties = new
+                                                {
+                                                    name = new { type = "string" },
+                                                    typeId = new { type = "number" },
+                                                    locationPoint = new
+                                                    {
+                                                        type = "object",
+                                                        properties = new
+                                                        {
+                                                            x = new { type = "number" },
+                                                            y = new { type = "number" },
+                                                            z = new { type = "number" }
+                                                        }
+                                                    },
+                                                    width = new { type = "number" },
+                                                    depth = new { type = "number" },
+                                                    height = new { type = "number" },
+                                                    baseLevel = new { type = "number" },
+                                                    baseOffset = new { type = "number" },
+                                                    rotation = new { type = "number" }
+                                                },
+                                                required = new[] { "name", "locationPoint", "width", "height", "baseLevel", "baseOffset" }
+                                            }
+                                        }
+                                    },
+                                    required = new[] { "data" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "create_surface_based_element",
+                                description = "Create one or more surface-based elements in Revit such as floors, ceilings, or roofs",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        data = new
+                                        {
+                                            type = "array",
+                                            items = new
+                                            {
+                                                type = "object",
+                                                properties = new
+                                                {
+                                                    name = new { type = "string" },
+                                                    typeId = new { type = "number" },
+                                                    boundary = new
+                                                    {
+                                                        type = "object",
+                                                        properties = new
+                                                        {
+                                                            outerLoop = new
+                                                            {
+                                                                type = "array",
+                                                                items = new
+                                                                {
+                                                                    type = "object",
+                                                                    properties = new
+                                                                    {
+                                                                        p0 = new
+                                                                        {
+                                                                            type = "object",
+                                                                            properties = new
+                                                                            {
+                                                                                x = new { type = "number" },
+                                                                                y = new { type = "number" },
+                                                                                z = new { type = "number" }
+                                                                            }
+                                                                        },
+                                                                        p1 = new
+                                                                        {
+                                                                            type = "object",
+                                                                            properties = new
+                                                                            {
+                                                                                x = new { type = "number" },
+                                                                                y = new { type = "number" },
+                                                                                z = new { type = "number" }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    },
+                                                    thickness = new { type = "number" },
+                                                    baseLevel = new { type = "number" },
+                                                    baseOffset = new { type = "number" }
+                                                },
+                                                required = new[] { "name", "boundary", "thickness", "baseLevel", "baseOffset" }
+                                            }
+                                        }
+                                    },
+                                    required = new[] { "data" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "delete_element",
+                                description = "Delete one or more elements from the Revit model by their element IDs",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        elementIds = new
+                                        {
+                                            type = "array",
+                                            items = new { type = "string" }
+                                        }
+                                    },
+                                    required = new[] { "elementIds" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "get_current_view_elements",
+                                description = "Get elements from the current active view in Revit",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        modelCategoryList = new
+                                        {
+                                            type = "array",
+                                            items = new { type = "string" }
+                                        },
+                                        annotationCategoryList = new
+                                        {
+                                            type = "array",
+                                            items = new { type = "string" }
+                                        },
+                                        includeHidden = new { type = "boolean" },
+                                        limit = new { type = "number" }
+                                    }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "get_current_view_info",
+                                description = "获取 Revit 当前活动视图的详细信息，包括视图类型、名称、比例等属性",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new{}
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "get_selected_elements",
+                                description = "Get elements currently selected in Revit",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        limit = new { type = "number" }
+                                    }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "send_code_to_revit",
+                                description = "Send C# code to Revit for execution",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        code = new { type = "string" },
+                                        parameters = new
+                                        {
+                                            type = "array"
+                                        }
+                                    },
+                                    required = new[] { "code" }
+                                }
+                            }
+                        },
+                        new 
+                        {
+                            type = "function",
+                            function = new 
+                            {
+                                name = "tag_all_walls",
+                                description = "Create tags for all walls in the current active view",
+                                parameters = new
+                                {
+                                    type = "object",
+                                    properties = new
+                                    {
+                                        useLeader = new { type = "boolean" },
+                                        tagTypeId = new { type = "string" }
+                                    }
+                                }
+                            }
+                        }
+                    };
+
                     Logger.Log("Инициализация HTTP клиента");
                     client.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
                     client.DefaultRequestHeaders.Add("Accept", "text/event-stream");
@@ -304,6 +582,7 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
                         model = MODEL,
                         messages = messages,
                         max_tokens = 5000,
+                        tools = tools,
                         stream = true
                     };
 
@@ -345,13 +624,54 @@ get_current_view_elements({""modelCategoryList"": [""OST_Walls""], ""includeHidd
                                 {
                                     Logger.Log($"Обработка JSON: {json}");
                                     var responseObject = JsonConvert.DeserializeObject<dynamic>(json);
-                                    var chunk = responseObject?.choices?[0]?.delta?.content?.ToString();
-                                    
-                                    if (!string.IsNullOrEmpty(chunk))
+                                var delta = responseObject?.choices?[0]?.delta;
+                                
+                                // Обработка текстового контента
+                                var textContent = delta?.content?.ToString();
+                                if (!string.IsNullOrEmpty(textContent))
+                                {
+                                    Logger.Log($"Получен текстовый chunk: {textContent}");
+                                    await onChunkReceived(textContent);
+                                }
+
+                                // Обработка вызовов функций
+                                var toolCalls = delta?.tool_calls;
+                                if (toolCalls != null)
+                                {
+                                    foreach (var toolCall in toolCalls)
                                     {
-                                        Logger.Log($"Получен chunk: {chunk}");
-                                        await onChunkReceived(chunk);
+                                        var toolName = toolCall.function?.name?.ToString();
+                                        var arguments = toolCall.function?.arguments?.ToString();
+                                        
+                                        if (!string.IsNullOrEmpty(toolName))
+                                        {
+                                            Logger.Log($"Получен вызов функции: {toolName}");
+                                            
+                                            var parameters = !string.IsNullOrEmpty(arguments) 
+                                                ? JsonConvert.DeserializeObject<Dictionary<string, object>>(arguments)
+                                                : new Dictionary<string, object>();
+
+                                            var mcpResponse = await ProcessMcpCall(new McpToolCall
+                                            {
+                                                Tool = toolName,
+                                                Parameters = parameters
+                                            });
+
+                                            // Формируем и отправляем результат выполнения функции
+                                            var resultText = $"\n[Выполнено: {toolName}]\n";
+                                            if (mcpResponse.Status == ResponseStatus.Success && !string.IsNullOrEmpty(mcpResponse.Message))
+                                            {
+                                                resultText += $"Результат: {mcpResponse.Message}\n";
+                                            }
+                                            else if (mcpResponse.Status == ResponseStatus.Error)
+                                            {
+                                                resultText += $"Ошибка: {mcpResponse.Message}\n";
+                                            }
+                                            
+                                            await onChunkReceived(resultText);
+                                        }
                                     }
+                                }
                                 }
                                 catch (Exception ex)
                                 {
