@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI-for-Revit", "AI-for-Revit\AI-for-Revit.csproj", "{90F85E7F-6294-449E-9F4C-77B369CC037D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyPlugin", "MyPlugin\MyPlugin.csproj", "{4084DCBE-6EFA-8A85-8F0F-DA217D467C38}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{90F85E7F-6294-449E-9F4C-77B369CC037D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{90F85E7F-6294-449E-9F4C-77B369CC037D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{90F85E7F-6294-449E-9F4C-77B369CC037D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{90F85E7F-6294-449E-9F4C-77B369CC037D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4084DCBE-6EFA-8A85-8F0F-DA217D467C38}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{4084DCBE-6EFA-8A85-8F0F-DA217D467C38}.Debug|Any CPU.Build.0 = Debug|x64
+		{4084DCBE-6EFA-8A85-8F0F-DA217D467C38}.Release|Any CPU.ActiveCfg = Release|x64
+		{4084DCBE-6EFA-8A85-8F0F-DA217D467C38}.Release|Any CPU.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FF5EBDAA-A5A7-497C-8DEE-65D60474FD05}
+	EndGlobalSection
+EndGlobal
