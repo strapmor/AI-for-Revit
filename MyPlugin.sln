@@ -1,9 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.13.35931.197 d17.13
+VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyPlugin", "MyPlugin\MyPlugin.csproj", "{EB0DF34A-682F-435C-87B4-9A5A14DB29F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AI-for-Revit", "AI-for-Revit\AI-for-Revit.csproj", "{450917D9-DD97-B2F1-416B-6228713DD581}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{EB0DF34A-682F-435C-87B4-9A5A14DB29F5}.Debug|x64.Build.0 = Debug|x64
 		{EB0DF34A-682F-435C-87B4-9A5A14DB29F5}.Release|x64.ActiveCfg = Release|x64
 		{EB0DF34A-682F-435C-87B4-9A5A14DB29F5}.Release|x64.Build.0 = Release|x64
+		{450917D9-DD97-B2F1-416B-6228713DD581}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{450917D9-DD97-B2F1-416B-6228713DD581}.Debug|x64.Build.0 = Debug|Any CPU
+		{450917D9-DD97-B2F1-416B-6228713DD581}.Release|x64.ActiveCfg = Release|Any CPU
+		{450917D9-DD97-B2F1-416B-6228713DD581}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
