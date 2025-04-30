@@ -127,7 +127,7 @@ namespace AI_for_Revit
                 throw new InvalidOperationException("The ListToolsAsync method returned null");
             }
 
-            return tools ?? throw new InvalidOperationException("Failed to cast tools to IReadOnlyList<Tool>");
+            return tools;
         }
 
         public async Task<CallToolResponse> ExecuteToolAsync(string toolName, Dictionary<string, object?> parameters)

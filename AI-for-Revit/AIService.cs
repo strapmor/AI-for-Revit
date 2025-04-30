@@ -652,14 +652,15 @@ namespace AI_for_Revit
                                 if (json == "[DONE]")
                                 {
                                     Logger.Log("Получен маркер завершения [DONE]");
-                                    return;
+                                    continue;
+                                    //return;
                                 }
 
                                 try
                                 {
                                     Logger.Log($"Обработка JSON: {json}");
                                     var responseObject = JsonConvert.DeserializeObject<dynamic>(json);
-                                var delta = responseObject?.choices?[0]?.delta;
+                                    var delta = responseObject?.choices?[0]?.delta;
                                 
                                 // Обработка текстового контента
                                 var textContent = delta?.content?.ToString();
@@ -747,8 +748,8 @@ namespace AI_for_Revit
                         };
                         response.McpResponses.Add(mcpResponse);
 
-                        //try 
-                        //{
+                        try
+                        {
                             var result = await ExecuteMcpTool(mcpCall.Tool, mcpCall.Parameters);
                             mcpResponse.Result = result;
 
@@ -776,15 +777,15 @@ namespace AI_for_Revit
                                         break;
                                 }
                             }
-                        //}
-                        //catch (Exception ex)
-                        //{
-                        //    mcpResponse.Status = ResponseStatus.Error;
-                        //    mcpResponse.Message = ex.Message;
-                        //    resultBuilder.AppendLine($"Ошибка: {ex.Message}");
-                        //}
-                        
-                        resultBuilder.AppendLine();
+                    }
+                        catch (Exception ex)
+            {
+                mcpResponse.Status = ResponseStatus.Error;
+                mcpResponse.Message = ex.Message;
+                resultBuilder.AppendLine($"Ошибка: {ex.Message}");
+            }
+
+            resultBuilder.AppendLine();
                     }
 
                     response.Answer = resultBuilder.ToString().Trim();

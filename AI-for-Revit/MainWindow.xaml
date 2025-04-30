@@ -31,6 +31,10 @@
                                VerticalAlignment="Center" Margin="10,0,0,0"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
+                        <Button x:Name="SettingsButton" Background="Transparent" ToolTip="Настройки">
+                            <Image Source="/settings_icon.png" Width="30" Height="30"/>
+                        </Button>
+                        
                         <!-- Индикатор состояния подключения -->
                         <Ellipse x:Name="ConnectionIndicator" Width="16" Height="16" Margin="10,0,10,0"
                                Fill="Gray" ToolTip="Состояние подключения к MCP серверу"/>
