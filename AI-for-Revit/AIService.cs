@@ -23,7 +23,7 @@ namespace AI_for_Revit
         private static readonly string apiKey = Environment.GetEnvironmentVariable("DEEPSEEK_FREE");
         private static readonly string apiUrl = "https://openrouter.ai/api/v1/chat/completions";
         private static readonly string MODEL = "deepseek/deepseek-chat"; 
-        public static List<Dictionary<string, string>> conversationHistory;
+        public static List<Dictionary<string, string>>? conversationHistory;
 
         public AIService()
         {
@@ -50,7 +50,7 @@ namespace AI_for_Revit
                 Logger.Log($"Ошибка при инициализации MCP клиента: {ex.Message}");
                 throw;
             }
-        }
+}
 
         public async Task<AIResponse> SendToChatGPT(string userPrompt, Func<AIResponse, Task> onPartialResponse)
         {
@@ -868,8 +868,8 @@ namespace AI_for_Revit
 
         private class McpToolCall
         {
-            public string Tool { get; set; }
-            public Dictionary<string, object?> Parameters { get; set; }
+            public string? Tool { get; set; }
+            public Dictionary<string, object?>? Parameters { get; set; }
         }
 
         private List<McpToolCall> ExtractMcpCalls(string text)

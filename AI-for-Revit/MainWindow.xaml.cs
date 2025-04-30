@@ -324,11 +324,14 @@ namespace AI_for_Revit
                 ConnectionState = MCPConnectionState.Connecting;
                 await _aiService.Initialize();
                 ConnectionState = MCPConnectionState.Connected;
-            }
-            catch
+        }
+            catch (Exception ex)
             {
-                ConnectionState = MCPConnectionState.Disconnected;
-            }
+                {
+                    Logger.Log("Ошибка подключения к MCP серверу: " + ex.Message);
+                    ConnectionState = MCPConnectionState.Disconnected;
+                }
+}
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => this.DragMove();

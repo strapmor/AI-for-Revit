@@ -114,12 +114,20 @@ namespace AI_for_Revit
             }
         }
 
-        public async Task<IReadOnlyList<Tool>> GetAvailableToolsAsync()
+        public async Task<IList<McpClientTool>> GetAvailableToolsAsync()
         {
             if (!isInitialized)
+            {
                 throw new InvalidOperationException("MCP client is not initialized");
+            }
 
-            return await Client.ListToolsAsync() as IReadOnlyList<Tool>;
+            var tools = await Client.ListToolsAsync();
+            if (tools == null)
+            {
+                throw new InvalidOperationException("The ListToolsAsync method returned null");
+            }
+
+            return tools ?? throw new InvalidOperationException("Failed to cast tools to IReadOnlyList<Tool>");
         }
 
         public async Task<CallToolResponse> ExecuteToolAsync(string toolName, Dictionary<string, object?> parameters)
