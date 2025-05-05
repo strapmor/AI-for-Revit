@@ -31,7 +31,7 @@
                                VerticalAlignment="Center" Margin="10,0,0,0"/>
 
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,0,10,0">
-                        <Button x:Name="SettingsButton" Background="Transparent" ToolTip="Настройки">
+                        <Button x:Name="SettingsButton" Background="Transparent" ToolTip="Настройки" Click="SettingsButton_Click"> 
                             <Image Source="/settings_icon.png" Width="30" Height="30"/>
                         </Button>
                         

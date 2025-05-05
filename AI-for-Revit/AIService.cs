@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿using System;
 using System.Net.Http;
 using System.Text;
 using System.Collections.Generic;
@@ -14,6 +14,7 @@ using ModelContextProtocol.Protocol.Transport;
 using ModelContextProtocol.Protocol.Messages;
 using ModelContextProtocol.Protocol.Types;
 using System.IO;
+using Newtonsoft.Json.Linq;
 
 namespace AI_for_Revit
 {
@@ -68,12 +69,14 @@ namespace AI_for_Revit
                 
                 var response = new AIResponse();
                 var fullResponse = new StringBuilder();
+                var toolName = new StringBuilder();
+                var toolParams = new StringBuilder();
                 var mcpBuffer = new StringBuilder();
 
-                await SendToAIStream(conversationHistory, async chunk => 
+                await SendToAIStream(conversationHistory, async textChunk => 
                 {
-                    fullResponse.Append(chunk);
-                    mcpBuffer.Append(chunk);
+                    fullResponse.Append(textChunk);
+                    mcpBuffer.Append(textChunk);
 
                     // Проверяем, есть ли в буфере вызов MCP инструмента
                     //var mcpCall = ExtractMcpCalls(mcpBuffer);
@@ -89,7 +92,16 @@ namespace AI_for_Revit
                     response.Answer = fullResponse.ToString();
                     response.IsPartial = true;
                     await onPartialResponse(response);
-                });
+                },
+                async functionNameChunk =>
+                {
+                    toolName.Append(functionNameChunk);
+                },
+                async functionParamsChunk =>
+                {
+                    toolParams.Append(functionParamsChunk);
+                }
+                );
 
                 // Добавляем полный ответ в историю
                 conversationHistory.Add(new Dictionary<string, string> 
@@ -97,6 +109,32 @@ namespace AI_for_Revit
                     { "role", "assistant" }, 
                     { "content", fullResponse.ToString() } 
                 });
+
+                if (!string.IsNullOrEmpty(toolName.ToString()))
+                {
+                    var parameters = Deserialize(toolParams.ToString());
+
+                    var obj = parameters["data"];
+                    Console.WriteLine(obj);
+
+                    var mcpResponse = await ProcessMcpCall(new McpToolCall
+                    {
+                        Tool = toolName.ToString(),
+                        Parameters = parameters,
+                    });
+
+                    //// Формируем и отправляем результат выполнения функции
+                    //var resultText = $"\n[Выполнено: {toolName} {parameters}]\n";
+                    //if (mcpResponse.Status == ResponseStatus.Success && !string.IsNullOrEmpty(mcpResponse.Message))
+                    //{
+                    //    resultText += $"Результат: {mcpResponse.Message}\n";
+                    //}
+                    //else if (mcpResponse.Status == ResponseStatus.Error)
+                    //{
+                    //    resultText += $"Ошибка: {mcpResponse.Message}\n";
+                    //}
+                    response.McpResponses.Add(mcpResponse);
+                }
 
                 // Возвращаем финальный ответ
                 response.Answer = fullResponse.ToString();
@@ -112,6 +150,28 @@ namespace AI_for_Revit
                     ErrorMessage = $"Ошибка при обработке запроса: {ex.Message}"
                 };
             }
+        }
+
+        public static Dictionary<string, object> Deserialize(string json)
+        {
+            var token = JToken.Parse(json);
+            return ConvertToken(token) as Dictionary<string, object>;
+        }
+
+        private static object ConvertToken(JToken token)
+        {
+            return token.Type switch
+            {
+                JTokenType.Object => token.Children<JProperty>()
+                    .ToDictionary(prop => prop.Name, prop => ConvertToken(prop.Value)),
+                JTokenType.Array => token.Select(ConvertToken).ToList(),
+                JTokenType.Integer => token.ToObject<int>(),
+                JTokenType.Float => token.ToObject<double>(),
+                JTokenType.String => token.ToObject<string>(),
+                JTokenType.Boolean => token.ToObject<bool>(),
+                JTokenType.Null => null,
+                _ => token.ToString() // Fallback (если тип не распознан)
+            };
         }
 
         private async Task<List<object>> GetToolsSchemaAsync()
@@ -208,7 +268,7 @@ namespace AI_for_Revit
                     conversationHistory.Add(toolResponse);
 
                     // Отправляем обновленный conversationHistory в Deepseek
-                    await SendToChatGPT("", async partialResponse => { });
+                    //await SendToChatGPT("", async partialResponse => { });
                     // Если результат содержит Content, обрабатываем его
                     if (result.Content != null && result.Content.Any())
                     {
@@ -239,7 +299,11 @@ namespace AI_for_Revit
             return response;
         }
 
-        private async Task SendToAIStream(List<Dictionary<string, string>> messages, Func<string, Task> onChunkReceived)
+        private async Task SendToAIStream(
+            List<Dictionary<string, string>> messages, 
+            Func<string, Task> onTextChunkReceived,
+            Func<string, Task> onFunctionNameReceived,
+            Func<string, Task> onFunctionParamsReceived)
         {
             try
             {
@@ -652,8 +716,7 @@ namespace AI_for_Revit
                                 if (json == "[DONE]")
                                 {
                                     Logger.Log("Получен маркер завершения [DONE]");
-                                    continue;
-                                    //return;
+                                    return;
                                 }
 
                                 try
@@ -667,7 +730,7 @@ namespace AI_for_Revit
                                 if (!string.IsNullOrEmpty(textContent))
                                 {
                                     Logger.Log($"Получен текстовый chunk: {textContent}");
-                                    await onChunkReceived(textContent);
+                                    await onTextChunkReceived(textContent);
                                 }
 
                                 // Обработка вызовов функций
@@ -677,34 +740,35 @@ namespace AI_for_Revit
                                     foreach (var toolCall in toolCalls)
                                     {
                                         var toolName = toolCall.function?.name?.ToString();
+                                        if(!string.IsNullOrEmpty(toolName)) await onFunctionNameReceived(toolName);
+                                        Logger.Log($"Получен вызов функции: {toolName}");
+
                                         var arguments = toolCall.function?.arguments?.ToString();
                                         
-                                        if (!string.IsNullOrEmpty(toolName))
+                                        if (!string.IsNullOrEmpty(arguments))
                                         {
-                                            Logger.Log($"Получен вызов функции: {toolName}");
                                             
-                                            var parameters = !string.IsNullOrEmpty(arguments) 
-                                                ? JsonConvert.DeserializeObject<Dictionary<string, object>>(arguments)
-                                                : new Dictionary<string, object>();
-
-                                            var mcpResponse = await ProcessMcpCall(new McpToolCall
-                                            {
-                                                Tool = toolName,
-                                                Parameters = parameters
-                                            });
-
-                                            // Формируем и отправляем результат выполнения функции
-                                            var resultText = $"\n[Выполнено: {toolName}]\n";
-                                            if (mcpResponse.Status == ResponseStatus.Success && !string.IsNullOrEmpty(mcpResponse.Message))
-                                            {
-                                                resultText += $"Результат: {mcpResponse.Message}\n";
-                                            }
-                                            else if (mcpResponse.Status == ResponseStatus.Error)
-                                            {
-                                                resultText += $"Ошибка: {mcpResponse.Message}\n";
-                                            }
                                             
-                                            await onChunkReceived(resultText);
+                                            
+
+                                                //var mcpResponse = await ProcessMcpCall(new McpToolCall
+                                                //{
+                                                //    Tool = toolName,
+                                                //    Parameters = parameters
+                                                //});
+
+                                                //// Формируем и отправляем результат выполнения функции
+                                                //var resultText = $"\n[Выполнено: {toolName} {parameters}]\n";
+                                                //if (mcpResponse.Status == ResponseStatus.Success && !string.IsNullOrEmpty(mcpResponse.Message))
+                                                //{
+                                                //    resultText += $"Результат: {mcpResponse.Message}\n";
+                                                //}
+                                                //else if (mcpResponse.Status == ResponseStatus.Error)
+                                                //{
+                                                //    resultText += $"Ошибка: {mcpResponse.Message}\n";
+                                                //}
+
+                                                await onFunctionParamsReceived(arguments);
                                         }
                                     }
                                 }

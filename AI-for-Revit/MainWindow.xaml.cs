@@ -335,5 +335,11 @@ namespace AI_for_Revit
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => this.DragMove();
+
+        private void SettingsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var sw = new SettingsWindow();
+            sw.Show();
+        }
     }
 }

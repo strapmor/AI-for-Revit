@@ -1,0 +1,5 @@
+{
+  "api_key": "",
+  "provider": "https://openrouter.ai/api/v1/chat/completions",
+  "model": "deepseek/deepseek-chat"
+}
