@@ -58,7 +58,7 @@
                     VerticalAlignment="Center" Margin="15, 0, 0, 0"/>
                     
                     <Border Grid.Row="2" CornerRadius="6" Background="#E5E5E5" BorderBrush="#A0A0A0" BorderThickness="1" Margin="15">
-                        <TextBox Name="InputTextBox" Height="50"
+                        <TextBox Name="APIKeyTextBox" Height="50"
                         Style="{StaticResource RoundedTextBoxStyle}"
                         Text="" 
                         HorizontalScrollBarVisibility="Auto"/>

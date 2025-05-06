@@ -22,6 +22,9 @@ namespace AI_for_Revit
         public SettingsWindow()
         {
             InitializeComponent();
+            APIKeyTextBox.Text = Configuration.Instance.GetApiKey();
+            ProviderTextBox.Text = Configuration.Instance.GetProvider();
+            ModelTextBox.Text = Configuration.Instance.GetModel();
         }
 
         private void Window_MouseLeftButtonDown(object sender, MouseButtonEventArgs e) => this.DragMove();

@@ -114,9 +114,6 @@ namespace AI_for_Revit
                 {
                     var parameters = Deserialize(toolParams.ToString());
 
-                    var obj = parameters["data"];
-                    Console.WriteLine(obj);
-
                     var mcpResponse = await ProcessMcpCall(new McpToolCall
                     {
                         Tool = toolName.ToString(),
@@ -152,7 +149,7 @@ namespace AI_for_Revit
             }
         }
 
-        public static Dictionary<string, object> Deserialize(string json)
+        public static Dictionary<string, object?> Deserialize(string json)
         {
             var token = JToken.Parse(json);
             return ConvertToken(token) as Dictionary<string, object>;

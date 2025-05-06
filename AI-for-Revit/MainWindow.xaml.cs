@@ -168,9 +168,10 @@ namespace AI_for_Revit
             // Отключаем кнопку отправки
             SendButton.IsEnabled = false;
 
-            //int queryCount = 0;
-            //do { 
-                //if (queryCount > 0) userInput = String.Empty;
+            int queryCount = 0;
+            do
+            {
+                if (queryCount > 0) userInput = String.Empty;
 
                 _mcpStatuses.Clear();
                 _mcpStatuses.Add(new McpStatusViewModel
@@ -285,9 +286,9 @@ namespace AI_for_Revit
                     SendButton.IsEnabled = true;
                     Separator.Visibility = Visibility.Visible;
                     LoadingProgressBar.Visibility = Visibility.Collapsed;
-                    //queryCount++;
+                    queryCount++;
                 }
-            //}while (AIService.conversationHistory[^1]["role"] == "tool");
+            } while (AIService.conversationHistory[^1]["role"] == "tool");
         }
 
         private void InputTextBox_GotFocus(object sender, RoutedEventArgs e)
